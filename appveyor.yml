@@ -63,7 +63,7 @@ deploy:
     server: https://spatialservices.scm.azurewebsites.net:443/msdeploy.axd?site=spatialservices
     website: spatialservices
     username: $spatialservices
-    artifact: website
+    artifact: website.zip
     password:
       secure: 0vcr+FUbAyn003aQJS6GiehOL58lMwAwHZiESh3cyBxZJgOy2qNtbVjelE9HzwICzel5bV816Se6DYdy03OJkA==
     remove_files: true

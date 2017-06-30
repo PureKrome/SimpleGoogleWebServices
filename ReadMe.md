@@ -13,7 +13,11 @@ NOTE: _This simple library is **not** intended to replace official Google .NET S
 - `DetailsAsync` : convert a Google PlaceId into a nicely Address object.
 - `CleanUpAddressAsync` : convert an address's abbreviations all into long format. e.g. St. (for street) -> Street. NOTE: This calls `Autocomplete` and then `Details`.
 
-# TODO - clean this up.
+### Installation
+
+![](http://i.imgur.com/axeaoow.png)
+
+---
 
 ### GeocodeAsync
 Given an query/address, this get's the Latitude and Longitude of the location.
