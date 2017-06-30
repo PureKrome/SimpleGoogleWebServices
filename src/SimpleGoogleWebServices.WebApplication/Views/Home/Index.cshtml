@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Maps spatial lookups.</title>
+</head>
+<body>
+<h1>Google spatial interactive api</h1>
+<hr/>
+<div>
+    <h2>Geocode an address</h2>
+    <form id="mainForm">
+        Address <input type="text" id="address" name="address" value="1 smith street brunswick victoria australia" size="50"/>
+        Postcode<input type="text" id="postcode" nam="postcode"/> <br/>
+        Google API Key <input type="text" id="key" name="key"/>
+        <input type="button" onclick="getGoogleGeocodeResults($('#address').val(), $('#postcode').val(), $('#key').val());" value="Hit it"/>
+    </form>
+</div>
+<hr/>
+<div>
+    <h2>Cleanup an address</h2> (e.g. convert St. to Street)
+    <form id="cleanUpForm">
+        Address <input type="text" id="cleanUpAddress" name="address" value="1 smith street brunswick victoria australia" size="50"/>
+        Google API Key <input type="text" id="cleanUpKey" name="key"/>
+        <input type="button" onclick="getGoogleCleanUpResults($('#cleanUpAddress').val(), $('#cleanUpKey').val());" value="Hit it"/>
+    </form>
+</div>
+
+<hr/>
+<hr/>
+<hr/>
+<div>
+    <h2>Results</h2>
+    <pre id="result"></pre>
+</div>
+<div id="errorMessage"></div>
+<script src="/Scripts/jquery-3.1.1.min.js">
+</script>
+<script src="/Scripts/Google.js"></script>
+</body>
+</html>

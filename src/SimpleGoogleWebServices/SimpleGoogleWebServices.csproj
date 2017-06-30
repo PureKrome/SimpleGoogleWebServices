@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <AssemblyName>WorldDomination.SimpleGoogleWebServices</AssemblyName>
+    <RootNamespace>WorldDomination.SimpleGoogleWebServices</RootNamespace>
+    <Version>0.0</Version>
+    <Authors>Pure Krome</Authors>
+    <Company>WorldDomination Technologies Pty. Ltd.</Company>
+    <Product>A simple wrapper over some Google Maps/Places Web Services.</Product>
+    <Description>This library is a simple wrapper over some common Google Maps or Google Places 'Web Services' API. It's ment to provide a quick and convenient way to query the specific Google Api's.</Description>
+    <Copyright>2017</Copyright>
+    <PackageLicenseUrl>https://raw.github.com/PureKrome/SimpleGoogleWebServices/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PureKrome/SimpleGoogleWebServices</PackageProjectUrl>
+    <PackageIconUrl>http://i.imgur.com/bR4Yf.jpg</PackageIconUrl>
+    <RepositoryUrl>https://github.com/PureKrome/SimpleGoogleWebServices</RepositoryUrl>
+    <PackageTags>spatial geospatial geocode geocoding google googlemapsapi worlddomination worldomination unicorn magicalunicorn magical-unicorn</PackageTags>
+    <PackageId>WorldDomination.SimpleGoogleWebServices</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+</Project>
