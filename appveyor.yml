@@ -60,12 +60,12 @@ deploy:
       branch: master
       appveyor_repo_tag: true
   - provider: WebDeploy
-    server: https://spatialservices.scm.azurewebsites.net:443/msdeploy.axd?site=spatialservices
-    website: spatialservices
-    username: $spatialservices
+    server: https://simplegooglewebservices.scm.azurewebsites.net:443/msdeploy.axd?site=simplegooglewebservices
+    website: simplegooglewebservices
+    username: $simplegooglewebservices
     artifact: website.zip
     password:
-      secure: 0vcr+FUbAyn003aQJS6GiehOL58lMwAwHZiESh3cyBxZJgOy2qNtbVjelE9HzwICzel5bV816Se6DYdy03OJkA==
+      secure: rvFCJmVBnz01FENzKlIGspkXxrnr7/maYZyiR7GX54M08HD5TLOzjq878nl8W4kRwEkStO+AgLp3Y7BJU/ZYYQ==
     remove_files: true
     on:
       branch: master
