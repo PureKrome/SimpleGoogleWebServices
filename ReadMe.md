@@ -17,6 +17,10 @@ NOTE: _This simple library is **not** intended to replace official Google .NET S
 
 ![](http://i.imgur.com/axeaoow.png)
 
+### Demo website
+
+[Test out some of the endpoints on a live website](https://simplegooglewebservices.azurewebsites.net/).
+
 ---
 
 ### GeocodeAsync
