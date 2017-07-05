@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Shouldly;
@@ -14,17 +15,20 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
     public class AutocompleteAsyncTests
     {
         [Theory]
-        [InlineData("Invalid Request", "INVALID_REQUEST")]
-        [InlineData("Request Denied", "REQUEST_DENIED")]
-        [InlineData("Zero Results", "ZERO_RESULTS")]
+        [InlineData("Unknown Error", "InternalServerError", HttpStatusCode.InternalServerError)]
+        [InlineData("Invalid Request", "INVALID_REQUEST", HttpStatusCode.OK)]
+        [InlineData("Request Denied", "REQUEST_DENIED", HttpStatusCode.OK)]
+        [InlineData("Zero Results", "ZERO_RESULTS", HttpStatusCode.OK)]
         public async Task GivenAnInvalidRequest_AutocompleteAsync_ReturnsAnErrorResult(string fileName,
-                                                                                       string status)
+                                                                                       string status,
+                                                                                       HttpStatusCode statusCode)
         {
             // Arrange.
             var json = File.ReadAllText($"Sample Data\\Autocomplete\\{fileName}.json");
             var options = new HttpMessageOptions
             {
-                HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
+                
+                HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json, statusCode)
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GooglePlacesApiService("aaa", httpClient);

@@ -48,7 +48,12 @@ namespace WorldDomination.SimpleGoogleWebServices
             {
                 var errorMessage =
                     $"Failed to retrieve a Google Maps Autocomplete result. Status Code: {response.StatusCode}. Message: {content}";
-                throw new Exception(errorMessage);
+                return new AutocompleteResult
+                {
+                    Status = response.StatusCode.ToString(),
+                    ErrorMessage = errorMessage,
+                    Results = Enumerable.Empty<Autocomplete.Address>()
+                };
             }
 
             // Get content from json into rich object model.

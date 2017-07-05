@@ -20,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Sample Data\Autocomplete\Unknown Error.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Sample Data\Autocomplete\Zero Results.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
