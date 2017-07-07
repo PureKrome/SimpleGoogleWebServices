@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Shouldly;
@@ -37,15 +38,18 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
         }
 
         [Theory]
-        [InlineData("Invalid Request", "INVALID_REQUEST")]
-        [InlineData("Request Denied", "REQUEST_DENIED")]
-        public async Task GivenAnInvalidRequest_DetailsAsync_ReturnsAnErrorResult(string filename, string status)
+        [InlineData("Unknown Error", "InternalServerError", HttpStatusCode.InternalServerError)]
+        [InlineData("Invalid Request", "INVALID_REQUEST", HttpStatusCode.OK)]
+        [InlineData("Request Denied", "REQUEST_DENIED", HttpStatusCode.OK)]
+        public async Task GivenAnInvalidRequest_DetailsAsync_ReturnsAnErrorResult(string filename,
+                                                                                  string status,
+                                                                                  HttpStatusCode statusCode)
         {
             // Arrange.
             var json = File.ReadAllText($"Sample Data\\Details\\{filename}.json");
             var options = new HttpMessageOptions
             {
-                HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
+                HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json, statusCode)
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GooglePlacesApiService("aaa", httpClient);

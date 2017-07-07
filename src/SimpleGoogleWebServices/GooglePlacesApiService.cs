@@ -92,10 +92,14 @@ namespace WorldDomination.SimpleGoogleWebServices
             if (!response.IsSuccessStatusCode)
             {
                 var errorMessage =
-                    $"Failed to retrieve a Google Places 'details' result. Status Code: {response.StatusCode}. Message: {content}";
-                throw new Exception(errorMessage);
+                    $"Failed to retrieve a Google Places Details result. Status Code: {response.StatusCode}. Message: {content}";
+                return new DetailsResult
+                {
+                    Status = response.StatusCode.ToString(),
+                    ErrorMessage = errorMessage
+                };
             }
-
+            
             // Get content from json into rich object model.
             var detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(content);
 
