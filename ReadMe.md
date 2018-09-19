@@ -37,7 +37,7 @@ Given an query/address, this get's the Latitude and Longitude of the location.
     // result.Coordinate.Latitude
 	// result.Coordinate.Longitude
 
-Remarks: Learn what [geocoding is on Wikipedia(http://en.wikipedia.org/wiki/Geocoding).
+Remarks: Learn what [geocoding is on Wikipedia](http://en.wikipedia.org/wiki/Geocoding).
 
 ### AutocompleteAsync
 Given a query lets see what possible address locations might be available.
@@ -55,7 +55,7 @@ NOTE: `PlaceId` is a specific, unique Google Id to identify the result location.
 
 
 ### DetailsAsync
-Given a (Google) PlaceId, return the sepcific, verbose Address information for that location.
+Given a (Google) PlaceId, return the Address components for that location.
 
     // Arrange.
 	var service = new GooglePlacesApiService(yourGoogleMapsApiKey, null || mockHttpClient);
@@ -65,17 +65,21 @@ Given a (Google) PlaceId, return the sepcific, verbose Address information for t
     
     // Now you can access:
     // result.Address.StreetNumber
-    // result.Address.Street
-	// result.Address.Suburb
+    // result.Address.Street.LongName (e.g. Smith Street)
+    // result.Address.Street.ShortName (e.g. Smith St)
+	// result.Address.Suburb.LongName (e.g. Hawthorn)
+    // result.Address.Suburb.ShortName (e.g. Hawthorn  -- yeah, basically the same as LongName, 99% of the time...)
 	// result.Address.City
-	// result.Address.State
-	// result.Address.Country
+	// result.Address.State.LongName (e.g. New South Wales)
+	// result.Address.State.ShortName (e.g. NSW)
+    // result.Address.Country.LongName (e.g. Australia)
+	// result.Address.Country.ShortName (e.g. AU)
 	// result.Address.Postcode
 
 
 ### CleanUpAddressAsync
 Given an exact address (because we don't know the `PlaceId`) get the details for the (expected) found location.<br/>
-*Note:* This first calls `AutocompleteAsync` and if we have 1 result exactly, then calls `DetailsASync` and extracts the long form address components.
+*Note:* This first calls `AutocompleteAsync` and if we have 1 result exactly, then calls `DetailsASync` and extracts the address components.
 
 
     // Arrange.
@@ -86,11 +90,15 @@ Given an exact address (because we don't know the `PlaceId`) get the details for
     
     // Now you can access:
     // result.Address.StreetNumber
-    // result.Address.Street
-	// result.Address.Suburb
+    // result.Address.Street.LongName (e.g. Smith Street)
+    // result.Address.Street.ShortName (e.g. Smith St)
+	// result.Address.Suburb.LongName (e.g. Hawthorn)
+    // result.Address.Suburb.ShortName (e.g. Hawthorn  -- yeah, basically the same as LongName, 99% of the time...)
 	// result.Address.City
-	// result.Address.State
-	// result.Address.Country
+	// result.Address.State.LongName (e.g. New South Wales)
+	// result.Address.State.ShortName (e.g. NSW)
+    // result.Address.Country.LongName (e.g. Australia)
+	// result.Address.Country.ShortName (e.g. AU)
 	// result.Address.Postcode
 
 
