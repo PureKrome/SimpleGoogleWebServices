@@ -37,8 +37,7 @@ namespace WorldDomination.SimpleGoogleWebServices.Details
         {
             get
             {
-                if (AddressComponents == null ||
-                    !AddressComponents.Any())
+                if (AddressComponents?.Any() != true)
                 {
                     return null;
                 }
@@ -62,14 +61,28 @@ namespace WorldDomination.SimpleGoogleWebServices.Details
                 return new Address
                 {
                     StreetNumber = streetNumber?.LongName,
-                    Street = street?.LongName,
-                    Suburb = suburb?.LongName,
+                    Street = street != null ? ToNames(street) : null,
+                    Suburb = suburb != null ? ToNames(suburb) : null,
                     City = city?.LongName,
-                    State = state?.LongName,
-                    Country = country?.LongName,
+                    State = state != null ? ToNames(state) : null,
+                    Country = country != null ? ToNames(country) : null,
                     Postcode = postcode?.LongName
                 };
             }
+        }
+
+        public Names ToNames(AddressComponent addressComponent)
+        {
+            if (addressComponent == null)
+            {
+                throw new System.ArgumentNullException(nameof(addressComponent));
+            }
+
+            return new Names
+            {
+                LongName = addressComponent.LongName,
+                ShortName = addressComponent.ShortName
+            };
         }
     }
 }

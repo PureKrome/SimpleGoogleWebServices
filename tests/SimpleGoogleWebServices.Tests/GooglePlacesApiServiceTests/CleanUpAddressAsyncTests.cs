@@ -93,11 +93,15 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             result.Status.ShouldBe("OK");
             result.Address.ShouldNotBeNull();
             result.Address.StreetNumber.ShouldNotBeNullOrWhiteSpace();
-            result.Address.Street.ShouldNotBeNullOrWhiteSpace();
-            result.Address.Suburb.ShouldNotBeNullOrWhiteSpace();
+            result.Address.Street.LongName.ShouldNotBeNullOrWhiteSpace();
+            result.Address.Street.ShortName.ShouldNotBeNullOrWhiteSpace();
+            result.Address.Suburb.LongName.ShouldNotBeNullOrWhiteSpace();
+            result.Address.Suburb.ShortName.ShouldNotBeNullOrWhiteSpace();
             result.Address.City.ShouldNotBeNullOrWhiteSpace();
-            result.Address.State.ShouldNotBeNullOrWhiteSpace();
-            result.Address.Country.ShouldNotBeNullOrWhiteSpace();
+            result.Address.State.LongName.ShouldNotBeNullOrWhiteSpace();
+            result.Address.State.ShortName.ShouldNotBeNullOrWhiteSpace();
+            result.Address.Country.LongName.ShouldNotBeNullOrWhiteSpace();
+            result.Address.Country.ShortName.ShouldNotBeNullOrWhiteSpace();
             result.Address.Postcode.ShouldNotBeNullOrWhiteSpace();
             options.Sum(x => x.NumberOfTimesCalled).ShouldBe(2);
         }

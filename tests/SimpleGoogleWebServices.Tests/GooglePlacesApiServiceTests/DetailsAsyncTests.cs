@@ -14,10 +14,16 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
     public class DetailsAsyncTests
     {
         [Theory]
-        [InlineData("OK result - full address", "1")]
-        [InlineData("OK result - no street number", null)]
+        [InlineData("OK result - full address", "1", "Blue Hills Crescent", "Blue Hills Cres", "Queensland", "QLD", "Australia", "AU")]
+        [InlineData("OK result - no street number", null, "Blue Hills Crescent", "Blue Hills Cres", "Queensland", "QLD", "Australia", "AU")]
         public async Task GivenAValidPlaceId_DetailsAsync_ReturnsAnOkResult(string filename,
-                                                                            string streetNumber)
+                                                                            string streetNumber,
+                                                                            string streetLongName,
+                                                                            string shortName,
+                                                                            string stateLongName,
+                                                                            string stateShortName,
+                                                                            string countryLongName,
+                                                                            string countryShortName)
         {
             // Arrange.
             var json = File.ReadAllText($"Sample Data\\Details\\{filename}.json");
@@ -35,6 +41,12 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             result.Status.ShouldBe("OK");
             result.Address.ShouldNotBeNull();
             result.Address.StreetNumber.ShouldBe(streetNumber);
+            result.Address.Street.LongName.ShouldBe(streetLongName);
+            result.Address.Street.ShortName.ShouldBe(shortName);
+            result.Address.State.LongName.ShouldBe(stateLongName);
+            result.Address.State.ShortName.ShouldBe(stateShortName);
+            result.Address.Country.LongName.ShouldBe(countryLongName);
+            result.Address.Country.ShortName.ShouldBe(countryShortName);
         }
 
         [Theory]
