@@ -17,6 +17,9 @@
         <PackageTags>spatial geospatial geocode geocoding google googlemapsapi worlddomination worldomination unicorn magicalunicorn magical-unicorn</PackageTags>
         <PackageId>WorldDomination.SimpleGoogleWebServices</PackageId>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
