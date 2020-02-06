@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using WorldDomination.Net.Http;
 using WorldDomination.SimpleGoogleWebServices;
+using WorldDomination.SimpleGoogleWebServices.Autocomplete;
 using Xunit;
 
 // ReSharper disable ConsiderUsingConfigureAwait
@@ -47,9 +49,14 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GooglePlacesApiService(apiKey, httpClient);
+            var autocompleteQuery = new AutocompleteQuery
+            {
+                Query = addressQuery,
+                AutocompleteType = AutocompleteType.Address
+            };
 
             // Act.
-            var result = await service.CleanUpAddressAsync(addressQuery);
+            var result = await service.CleanUpAddressAsync(autocompleteQuery, CancellationToken.None);
 
             // Assert.
             result.Status.ShouldBe(status);
@@ -85,9 +92,14 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GooglePlacesApiService(apiKey, httpClient);
+            var autocompleteQuery = new AutocompleteQuery
+            {
+                Query = addressQuery,
+                AutocompleteType = AutocompleteType.Address
+            };
 
             // Act.
-            var result = await service.CleanUpAddressAsync(addressQuery);
+            var result = await service.CleanUpAddressAsync(autocompleteQuery, CancellationToken.None);
 
             // Assert.
             result.Status.ShouldBe("OK");

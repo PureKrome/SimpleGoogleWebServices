@@ -1,10 +1,12 @@
 ﻿using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using WorldDomination.Net.Http;
 using WorldDomination.SimpleGoogleWebServices;
+using WorldDomination.SimpleGoogleWebServices.Details;
 using Xunit;
 
 // ReSharper disable ConsiderUsingConfigureAwait
@@ -33,9 +35,13 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GooglePlacesApiService("aaa", httpClient);
+            var detailsQuery = new DetailsQuery
+            {
+                PlaceId = "whatever"
+            };
 
             // Act.
-            var result = await service.DetailsAsync("whatever");
+            var result = await service.DetailsAsync(detailsQuery, CancellationToken.None);
 
             // Assert.
             result.Status.ShouldBe("OK");
@@ -65,9 +71,13 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GooglePlacesApiService("aaa", httpClient);
+            var detailsQuery = new DetailsQuery
+            {
+                PlaceId = "whatever"
+            };
 
             // Act.
-            var result = await service.DetailsAsync("whatever");
+            var result = await service.DetailsAsync(detailsQuery, CancellationToken.None);
 
             // Assert.
             result.Status.ShouldBe(status);

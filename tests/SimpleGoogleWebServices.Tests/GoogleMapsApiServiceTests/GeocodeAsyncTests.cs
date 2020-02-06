@@ -1,10 +1,12 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using WorldDomination.Net.Http;
 using WorldDomination.SimpleGoogleWebServices;
+using WorldDomination.SimpleGoogleWebServices.Geocode;
 using Xunit;
 
 // ReSharper disable ConsiderUsingConfigureAwait
@@ -24,9 +26,13 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GoogleMapsApiService("aaa", httpClient);
+            var geocodeQuery = new GeocodeQuery
+            {
+                Address = "whatever"
+            };
 
             // Act.
-            var result = await service.GeocodeAsync("whatever");
+            var result = await service.GeocodeAsync(geocodeQuery, CancellationToken.None);
 
             // Assert.
             result.Results.Count().ShouldBe(0);
@@ -46,9 +52,13 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GoogleMapsApiService("aaa", httpClient);
+            var geocodeQuery = new GeocodeQuery
+            {
+                Address = "sdfhgjshf ashdf ashdfj asd gfajskdg"
+            };
 
             // Act.
-            var result = await service.GeocodeAsync("sdfhgjshf ashdf ashdfj asd gfajskdg");
+            var result = await service.GeocodeAsync(geocodeQuery, CancellationToken.None);
 
             // Assert.
             result.Results.Count().ShouldBe(0);
@@ -68,23 +78,26 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             const string state = "VIC";
             const string postcode = "3030";
             const string country = "AUSTRALIA";
-            var query = $"{streetNumber} {street}, {state}, {country}";
 
             var componentFilters = new ComponentFilters
             {
                 PostalCode = postcode
             };
-            var json = File.ReadAllText(
-                "Sample Data\\Geocode\\Result - 15 Spinnaker Rise Sanctuary Lakes Victoria.json");
+            var json = File.ReadAllText("Sample Data\\Geocode\\Result - 15 Spinnaker Rise Sanctuary Lakes Victoria.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GoogleMapsApiService("aaa", httpClient);
+            var geocodeQuery = new GeocodeQuery
+            {
+                Address = $"{streetNumber} {street}, {state}, {country}",
+                ComponentFilters = componentFilters
+            };
 
             // Act.
-            var result = await service.GeocodeAsync(query, componentFilters);
+            var result = await service.GeocodeAsync(geocodeQuery, CancellationToken.None);
 
             // Assert.
             result.ErrorMessage.ShouldBeNullOrEmpty();
@@ -107,7 +120,6 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             const string state = "VIC";
             const string postcode = "3121";
             const string country = "AUSTRALIA";
-            var query = $"{streetNumber} {street}, {suburb} {state} {postcode}, {country}";
 
             var componentFilters = new ComponentFilters
             {
@@ -120,9 +132,14 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             };
             var httpClient = new HttpClient(new FakeHttpMessageHandler(options));
             var service = new GoogleMapsApiService("aaa", httpClient);
+            var geocodeQuery = new GeocodeQuery
+            {
+                Address = $"{streetNumber} {street}, {suburb} {state} {postcode}, {country}",
+                ComponentFilters = componentFilters
+            };
 
             // Act.
-            var result = await service.GeocodeAsync(query, componentFilters);
+            var result = await service.GeocodeAsync(geocodeQuery, CancellationToken.None);
 
             // Assert.
             result.ErrorMessage.ShouldBeNullOrEmpty();
