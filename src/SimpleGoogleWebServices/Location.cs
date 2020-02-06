@@ -1,4 +1,4 @@
-﻿namespace WorldDomination.SimpleGoogleWebServices.Geocode
+﻿namespace WorldDomination.SimpleGoogleWebServices
 {
     public class Location
     {
