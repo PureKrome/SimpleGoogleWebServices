@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using WorldDomination.SimpleGoogleWebServices.Geocode;
@@ -32,18 +33,21 @@ namespace WorldDomination.SimpleGoogleWebServices
             _httpClient = httpClient ?? new HttpClient();
         }
 
-        public async Task<GeocodeResult> GeocodeAsync(string query,
-                                                      ComponentFilters filters = null)
+        public async Task<GeocodeResult> GeocodeAsync(GeocodeQuery query, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var address = Uri.EscapeDataString(query);
+            if (string.IsNullOrWhiteSpace(query.Address))
+            {
+                throw new ArgumentNullException(nameof(query.Address));
+            }
+
+            var address = Uri.EscapeDataString(query.Address);
             var requestUrl = new StringBuilder();
-            requestUrl.Append(
-                $"https://maps.googleapis.com/maps/api/geocode/json?address={address}&sensor=false");
+            requestUrl.Append($"https://maps.googleapis.com/maps/api/geocode/json?address={address}&sensor=false");
 
             // Append the API key if it's been provided.
             if (!string.IsNullOrWhiteSpace(_apiKey))
@@ -51,45 +55,73 @@ namespace WorldDomination.SimpleGoogleWebServices
                 requestUrl.Append($"&key={_apiKey}");
             }
 
-            if (filters != null)
+            if (query.ComponentFilters != null)
             {
-                var components = ConvertCompenentFiltersToQuerystringParameter(filters);
+                var components = ConvertCompenentFiltersToQuerystringParameter(query.ComponentFilters);
                 if (!string.IsNullOrWhiteSpace(components))
                 {
                     requestUrl.Append($"&components={components}");
                 }
             }
 
-            var response = await _httpClient.GetAsync(requestUrl.ToString())
-                                            .ConfigureAwait(false);
-            var content = await response.Content.ReadAsStringAsync()
-                                        .ConfigureAwait(false);
+            var count = 0;
+            const int maxRetries = 5;
 
-            if (!response.IsSuccessStatusCode)
+            // Need to make sure we don't hit the google api limits.
+            while (count < maxRetries)
             {
-                var errorMessage =
-                    $"Failed to retrieve a Google Maps Geocode result. Status Code: {response.StatusCode}. Message: {content}";
-                throw new Exception(errorMessage);
+                count++;
+
+                var response = await _httpClient.GetAsync(requestUrl.ToString(), cancellationToken)
+                                                .ConfigureAwait(false);
+
+                var content = await response.Content.ReadAsStringAsync()
+                                            .ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage =
+                        $"Failed to retrieve a Google Maps Geocode result. Status Code: {response.StatusCode}. Message: {content}";
+                    throw new Exception(errorMessage);
+                }
+
+                // Convert the response JSON content into a nice rich object model.
+                var geocodeResponse = JsonConvert.DeserializeObject<GeocodeResponse>(content);
+
+                if (geocodeResponse.Status == "OVER_QUERY_LIMIT")
+                {
+                    Console.WriteLine(" ... sleep zzzz ....");
+                    Thread.Sleep(1000 * 10); // Sleep for three seconds and wait...
+                }
+                else
+                {
+                    // We have a legit answer.
+
+                    count = maxRetries;
+
+                    // Now project the address and lat/long data.
+                    var locations = from g in geocodeResponse.Results
+                                    select new Location
+                                    {
+                                        Id = query.Id,
+                                        Address = g.FormattedAddress,
+                                        Coordinate = g.ToCoordinate
+                                    };
+
+                    // Package this up into a nice result object.
+                    return new GeocodeResult
+                    {
+                        Status = geocodeResponse.Status,
+                        ErrorMessage = geocodeResponse.ErrorMessage,
+                        Results = locations
+                    };
+                }
             }
 
-            // Convert the response JSON content into a nice rich object model.
-            var geocodeResponse = JsonConvert.DeserializeObject<GeocodeResponse>(content);
+            // Too many retries.
+            Console.WriteLine("  Failed to get any google results because too many retries :~(");
 
-            // Now project the address and lat/long data.
-            var locations = from g in geocodeResponse.Results
-                            select new Location
-                            {
-                                Address = g.FormattedAddress,
-                                Coordinate = g.ToCoordinate
-                            };
-
-            // Package this up into a nice result object.
-            return new GeocodeResult
-            {
-                Status = geocodeResponse.Status,
-                ErrorMessage = geocodeResponse.ErrorMessage,
-                Results = locations
-            };
+            return null;
         }
 
         // REF: https://developers.google.com/maps/documentation/geocoding/#ComponentFiltering

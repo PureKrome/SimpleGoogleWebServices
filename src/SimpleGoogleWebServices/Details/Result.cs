@@ -84,5 +84,7 @@ namespace WorldDomination.SimpleGoogleWebServices.Details
                 ShortName = addressComponent.ShortName
             };
         }
+
+        public Coordinate ToCoordinate => Geometry?.Location;
     }
 }

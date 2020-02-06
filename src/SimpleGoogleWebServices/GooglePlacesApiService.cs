@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using WorldDomination.SimpleGoogleWebServices.Autocomplete;
@@ -28,18 +29,23 @@ namespace WorldDomination.SimpleGoogleWebServices
             _httpClient = httpClient?? new HttpClient();
         }
 
-        public async Task<AutocompleteResult> AutocompleteAsync(string query)
+        public async Task<AutocompleteResult> AutocompleteAsync(AutocompleteQuery query, CancellationToken cancellationToke)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var address = Uri.EscapeDataString(query);
-            var requestUrl = $"https://maps.googleapis.com/maps/api/place/autocomplete/json?input={address}&types=address&key={_apiKey}";
+            if (string.IsNullOrWhiteSpace(query.Query))
+            {
+                throw new ArgumentNullException(nameof(query.Query));
+            }
 
-            var httpClient = _httpClient ?? new HttpClient();
-            var response = await httpClient.GetAsync(requestUrl)
+            var address = Uri.EscapeDataString(query.Query);
+            var requestUrl = $"https://maps.googleapis.com/maps/api/place/autocomplete/json?input={address}&types={query.AutocompleteType.ToQueryStringParameter()}&key={_apiKey}";
+
+            var httpClient = _httpClient;
+            var response = await httpClient.GetAsync(requestUrl, cancellationToke)
                                            .ConfigureAwait(false);
             var content = await response.Content.ReadAsStringAsync()
                                         .ConfigureAwait(false);
@@ -63,6 +69,7 @@ namespace WorldDomination.SimpleGoogleWebServices
             var addresses = from p in predictions.Predictions
                                    select new Autocomplete.Address
                                    {
+                                       Id = query.Id,
                                        PlaceId = p.PlaceId,
                                        Location = p.Description
                                    };
@@ -75,16 +82,21 @@ namespace WorldDomination.SimpleGoogleWebServices
             };
         }
 
-        public async Task<DetailsResult> DetailsAsync(string placeId)
+        public async Task<DetailsResult> DetailsAsync(DetailsQuery query, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(placeId))
+            if (query is null)
             {
-                throw new ArgumentNullException(nameof(placeId));
+                throw new ArgumentNullException(nameof(query));
             }
+
+            if (string.IsNullOrWhiteSpace(query.PlaceId))
+            {
+                throw new ArgumentNullException(nameof(query.PlaceId));
+            }
+
+            var requestUrl = $"https://maps.googleapis.com/maps/api/place/details/json?placeid={query.PlaceId}&key={_apiKey}";
             
-            var requestUrl = $"https://maps.googleapis.com/maps/api/place/details/json?placeid={placeId}&key={_apiKey}";
-            
-            var response = await _httpClient.GetAsync(requestUrl)
+            var response = await _httpClient.GetAsync(requestUrl, cancellationToken)
                                            .ConfigureAwait(false);
             var content = await response.Content.ReadAsStringAsync()
                                         .ConfigureAwait(false);
@@ -107,19 +119,30 @@ namespace WorldDomination.SimpleGoogleWebServices
             {
                 Status = detailsResponse.Status,
                 ErrorMessage = detailsResponse.ErrorMessage,
-                Address = detailsResponse.Result?.ToAddress
+                Address = detailsResponse.Result?.ToAddress,
+                Location = new Location
+                {
+                    Id = query.Id,
+                    Address = detailsResponse.Result?.FormattedAddress,
+                    Coordinate = detailsResponse.Result?.ToCoordinate
+                }
             };
         }
 
-        public async Task<DetailsResult> CleanUpAddressAsync(string query)
+        public async Task<DetailsResult> CleanUpAddressAsync(AutocompleteQuery query, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query));
             }
 
+            if (string.IsNullOrWhiteSpace(query.Query))
+            {
+                throw new ArgumentNullException(nameof(query.Query));
+            }
+
             // First we need to get the autocomplete results.
-            var autocompleteResults = await AutocompleteAsync(query).ConfigureAwait(false);
+            var autocompleteResults = await AutocompleteAsync(query, cancellationToken).ConfigureAwait(false);
 
             if (autocompleteResults.Status != "OK")
             {
@@ -153,7 +176,11 @@ namespace WorldDomination.SimpleGoogleWebServices
                 };
             }
 
-            return await DetailsAsync(autoCompleteResult.PlaceId).ConfigureAwait(false);
+            var detailsQuery = new DetailsQuery
+            {
+                PlaceId = autoCompleteResult.PlaceId
+            };
+            return await DetailsAsync(detailsQuery, cancellationToken).ConfigureAwait(false);
         }
     }
 }
