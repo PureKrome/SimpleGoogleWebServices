@@ -1,12 +1,12 @@
 ﻿namespace WorldDomination.SimpleGoogleWebServices.Geocode
 {
-    public class Location
+    public class GeocodeQuery
     {
         /// <summary>
-        /// Optional Identifier.
+        /// Optional Identifier to link the potential result back to this query.
         /// </summary>
         public string Id { get; set; }
         public string Address { get; set; }
-        public Coordinate Coordinate { get; set; }
+        public ComponentFilters ComponentFilters { get; set; }
     }
 }

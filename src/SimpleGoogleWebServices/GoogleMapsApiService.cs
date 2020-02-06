@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using WorldDomination.SimpleGoogleWebServices.Geocode;
@@ -32,18 +33,21 @@ namespace WorldDomination.SimpleGoogleWebServices
             _httpClient = httpClient ?? new HttpClient();
         }
 
-        public async Task<GeocodeResult> GeocodeAsync(string query,
-                                                      ComponentFilters filters = null)
+        public async Task<GeocodeResult> GeocodeAsync(GeocodeQuery query, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var address = Uri.EscapeDataString(query);
+            if (string.IsNullOrWhiteSpace(query.Address))
+            {
+                throw new ArgumentNullException(nameof(query.Address));
+            }
+
+            var address = Uri.EscapeDataString(query.Address);
             var requestUrl = new StringBuilder();
-            requestUrl.Append(
-                $"https://maps.googleapis.com/maps/api/geocode/json?address={address}&sensor=false");
+            requestUrl.Append($"https://maps.googleapis.com/maps/api/geocode/json?address={address}&sensor=false");
 
             // Append the API key if it's been provided.
             if (!string.IsNullOrWhiteSpace(_apiKey))
@@ -51,16 +55,16 @@ namespace WorldDomination.SimpleGoogleWebServices
                 requestUrl.Append($"&key={_apiKey}");
             }
 
-            if (filters != null)
+            if (query.ComponentFilters != null)
             {
-                var components = ConvertCompenentFiltersToQuerystringParameter(filters);
+                var components = ConvertCompenentFiltersToQuerystringParameter(query.ComponentFilters);
                 if (!string.IsNullOrWhiteSpace(components))
                 {
                     requestUrl.Append($"&components={components}");
                 }
             }
 
-            var response = await _httpClient.GetAsync(requestUrl.ToString())
+            var response = await _httpClient.GetAsync(requestUrl.ToString(), cancellationToken)
                                             .ConfigureAwait(false);
             var content = await response.Content.ReadAsStringAsync()
                                         .ConfigureAwait(false);
@@ -79,6 +83,7 @@ namespace WorldDomination.SimpleGoogleWebServices
             var locations = from g in geocodeResponse.Results
                             select new Location
                             {
+                                Id = query.Id,
                                 Address = g.FormattedAddress,
                                 Coordinate = g.ToCoordinate
                             };
