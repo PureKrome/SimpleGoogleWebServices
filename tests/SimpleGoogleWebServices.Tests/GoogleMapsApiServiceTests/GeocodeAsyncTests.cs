@@ -19,7 +19,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
         public async Task GivenAGeocodingErrorOccured_Geocode_ReturnsAResultWithTheErrorMessage()
         {
             // Arrange.
-            var json = File.ReadAllText("Sample Data\\Geocode\\Error Result.json");
+            var json = File.ReadAllText("Sample Data/Geocode/Error Result.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
@@ -45,7 +45,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
         public async Task GivenAnInValidQuery_Geocode_ReturnsANull()
         {
             // Arrange.
-            var json = File.ReadAllText("Sample Data\\Geocode\\Zero Results.json");
+            var json = File.ReadAllText("Sample Data/Geocode/Zero Results.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
@@ -83,7 +83,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             {
                 PostalCode = postcode
             };
-            var json = File.ReadAllText("Sample Data\\Geocode\\Result - 15 Spinnaker Rise Sanctuary Lakes Victoria.json");
+            var json = File.ReadAllText("Sample Data/Geocode/Result - 15 Spinnaker Rise Sanctuary Lakes Victoria.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
@@ -125,7 +125,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GoogleMapsApiSer
             {
                 PostalCode = postcode
             };
-            var json = File.ReadAllText("Sample Data\\Geocode\\Results.json");
+            var json = File.ReadAllText("Sample Data/Geocode/Results.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)

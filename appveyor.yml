@@ -1,19 +1,15 @@
-
 version: '{build}.0.0-dev'
-configuration: Release
-os: Visual Studio 2019
+image: Ubuntu
 pull_requests:
   do_not_increment_build_number: true
+  
+
 environment:
-  project_name: SimpleGoogleWebServices
-  library_project_file: 'src\%project_name%\%project_name%.csproj'
-  tests_project_file: 'tests\%project_name%.Tests\%project_name%.Tests.csproj'
-  website_project_file: 'src\%project_name%.WebApplication\%project_name%.WebApplication.csproj'
-branches:
-  # whitelist
-  only:
-    - master
-        
+  PROJECT_NAME: SimpleGoogleWebServices
+  LIBRARY_PROJECT_FILE: 'src\%PROJECT_NAME%\%PROJECT_NAME%.csproj'
+  WEBSITE_PROJECT_FILE: 'src\%PROJECT_NAME%.WebApplication\%PROJECT_NAME%.WebApplication.csproj'
+
+
 # Override the 'version' if this is a GH-tag-commit -or- this is a custom branch (i.e not 'master').
 init:
   - ps: |
@@ -23,20 +19,58 @@ init:
           Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_TAG_NAME"
       }
       iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/PureKrome/0f79e25693d574807939/raw/f5b40256fc2ca77d49f1c7773d28406152544c1e/appveyor-build-info.ps'))
-                                       
+
+
+matrix:
+  fast_finish: true
+
+
+configuration:
+  - Debug
+  - Release
+
+
 before_build:
+  # Display .NET Core version
   - dotnet --info
 
+
 build_script:
-  - dotnet restore 
-  - dotnet build -c %CONFIGURATION% /p:Version=%APPVEYOR_BUILD_VERSION% --no-restore
+  - dotnet restore --verbosity quiet
+  - ps: dotnet build -c $env:CONFIGURATION -v minimal /p:Version=$env:APPVEYOR_BUILD_VERSION --no-restore
+
 
 test_script:
-  - dotnet test %tests_project_file% -c %CONFIGURATION% -v normal --no-build
-  - dotnet pack %library_project_file% -c %CONFIGURATION% /p:Version=%APPVEYOR_BUILD_VERSION% --no-build
+  - ps: |
+      if ($env:CONFIGURATION -eq 'Debug')
+      {
+          dotnet test -c $env:CONFIGURATION -v minimal --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory './CodeCoverageResults'
+      }
+      else
+      {
+          dotnet test -c $env:CONFIGURATION -v minimal --no-build
+      }
 
+
+# We only:
+#   - Send DEBUG results up to codecov.
+#   - Pack (a nuget package) for RELEASE only.
+#   - Publish the website for RELEASE onlu.
 after_test:
-  - dotnet publish %website_project_file% -c %CONFIGURATION% -o %appveyor_build_folder%\website
+  - ps: |
+      if ($env:CONFIGURATION -eq 'Debug')
+      {
+          # Currently, the bash script version is better than the .exe version.
+          Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+          bash codecov.sh -s './CodeCoverageResults/' -f '*.xml' -Z
+      }
+      
+      if ($env:CONFIGURATION -eq 'Release')
+      {
+          dotnet pack $env:LIBRARY_PROJECT_FILE -c $env:CONFIGURATION --include-symbols -p:SymbolPackageFormat=snupkg /p:Version=$env:APPVEYOR_BUILD_VERSION --no-build
+          dotnet publish $env:WEBSITE_PROJECT_FILE -c $env:CONFIGURATION -o $env:APPVEYOR_BUILD_FOLDER\website
+      }
+
 
 artifacts:
   - path: '**\*.nupkg'
@@ -45,8 +79,7 @@ artifacts:
   - path: '**\*.snupkg'
     name: nuget-symbols
     type: NuGetPackage
-  - path: website
-    name: website
+
 
 # Myget -> master and not tagged.
 # Nuget -> master and tagged.
@@ -61,7 +94,7 @@ deploy:
     artifact: nuget-packages
     on:
       branch: master
-      appveyor_repo_tag: false
+      APPVEYOR_REPO_TAG: false
 
     # Both nupkg and snupkg
   - provider: NuGet
@@ -71,7 +104,7 @@ deploy:
     artifact: nuget-packages
     on:
       branch: master
-      appveyor_repo_tag: true
+      APPVEYOR_REPO_TAG: true
   - provider: NuGet
     api_key:
       secure: jfcUvHZhgnUboplqTBDWr8mG5PIlrgBv5TA2fhhop4ZSiDxskyy+RtYyeHoduJFR
@@ -79,7 +112,7 @@ deploy:
     artifact: nuget-symbols
     on:
       branch: master
-      appveyor_repo_tag: true
+      APPVEYOR_REPO_TAG: true
 
   - provider: WebDeploy
     server: https://simplegooglewebservices.scm.azurewebsites.net:443/msdeploy.axd?site=simplegooglewebservices
@@ -91,4 +124,9 @@ deploy:
     remove_files: true
     on:
       branch: master
-      appveyor_repo_tag: true
+      APPVEYOR_REPO_TAG: true
+
+
+cache:
+  - '/home/appveyor/.nuget/packages/'
+ 

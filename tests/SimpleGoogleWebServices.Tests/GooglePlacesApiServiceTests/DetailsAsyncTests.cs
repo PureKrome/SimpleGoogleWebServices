@@ -28,7 +28,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
                                                                             string countryShortName)
         {
             // Arrange.
-            var json = File.ReadAllText($"Sample Data\\Details\\{filename}.json");
+            var json = File.ReadAllText($"Sample Data/Details/{filename}.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
@@ -64,7 +64,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
                                                                                   HttpStatusCode statusCode)
         {
             // Arrange.
-            var json = File.ReadAllText($"Sample Data\\Details\\{filename}.json");
+            var json = File.ReadAllText($"Sample Data/Details/{filename}.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json, statusCode)
