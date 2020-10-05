@@ -27,10 +27,10 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             // Arrange.
             const string addressQuery = "whatever";
             const string apiKey = "aaa";
-            var autocompleteJson = File.ReadAllText($"Sample Data\\Autocomplete\\{autocompleteFileName}.json");
+            var autocompleteJson = File.ReadAllText($"Sample Data/Autocomplete/{autocompleteFileName}.json");
             var autocompleteResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(autocompleteJson);
 
-            var detailsJson = File.ReadAllText($"Sample Data\\Details\\{detailsFileName}.json");
+            var detailsJson = File.ReadAllText($"Sample Data/Details/{detailsFileName}.json");
             var detailsResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(detailsJson);
 
             var options = new[]
@@ -70,10 +70,10 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
             // Arrange.
             const string addressQuery = "whatever";
             const string apiKey = "aaa";
-            var autocompleteJson = File.ReadAllText("Sample Data\\Autocomplete\\Single Prediction.json");
+            var autocompleteJson = File.ReadAllText("Sample Data/Autocomplete/Single Prediction.json");
             var autocompleteResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(autocompleteJson);
 
-            var detailsJson = File.ReadAllText("Sample Data\\Details\\OK result - full address.json");
+            var detailsJson = File.ReadAllText("Sample Data/Details/OK result - full address.json");
             var detailsResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(detailsJson);
 
             var options = new[]

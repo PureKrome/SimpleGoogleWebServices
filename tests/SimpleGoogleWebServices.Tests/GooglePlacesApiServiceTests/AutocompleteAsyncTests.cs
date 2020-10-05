@@ -26,7 +26,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
                                                                                        HttpStatusCode statusCode)
         {
             // Arrange.
-            var json = File.ReadAllText($"Sample Data\\Autocomplete\\{fileName}.json");
+            var json = File.ReadAllText($"Sample Data/Autocomplete/{fileName}.json");
             var options = new HttpMessageOptions
             {
                 
@@ -55,7 +55,7 @@ namespace WorldDomination.Spatial.SimpleGoogleWebServices.Tests.GooglePlacesApiS
                                                                                string address)
         {
             // Arrange.
-            var json = File.ReadAllText($"Sample Data\\Autocomplete\\{fileName}.json");
+            var json = File.ReadAllText($"Sample Data/Autocomplete/{fileName}.json");
             var options = new HttpMessageOptions
             {
                 HttpResponseMessage = FakeHttpMessageHandler.GetStringHttpResponseMessage(json)
