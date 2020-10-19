@@ -10,17 +10,16 @@
         <Product>A simple wrapper over some Google Maps/Places Web Services.</Product>
         <Description>This library is a simple wrapper over some common Google Maps or Google Places 'Web Services' API. It's ment to provide a quick and convenient way to query the specific Google Api's.</Description>
         <Copyright>2017</Copyright>
-        <PackageLicenseUrl>https://raw.github.com/PureKrome/SimpleGoogleWebServices/master/License.txt</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/PureKrome/SimpleGoogleWebServices</PackageProjectUrl>
-        <PackageIconUrl>http://i.imgur.com/bR4Yf.jpg</PackageIconUrl>
         <RepositoryUrl>https://github.com/PureKrome/SimpleGoogleWebServices</RepositoryUrl>
         <PackageTags>spatial geospatial geocode geocoding google googlemapsapi worlddomination worldomination unicorn magicalunicorn magical-unicorn</PackageTags>
         <PackageId>WorldDomination.SimpleGoogleWebServices</PackageId>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <LangVersion>latest</LangVersion>
+        <PackageLicenseFile>License.md</PackageLicenseFile>
+        <PackageIcon>icon.jpg</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,6 +28,17 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\icon.jpg">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
+      <None Include="..\..\License.md">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>
